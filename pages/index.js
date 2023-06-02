@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import Profile from "../components/profile";
+import CardAvatar from "../components/card-avatar";
+import * as ethers from "ethers";
+import {
+  useEtherspotAddresses,
+  useEtherspotBalances,
+} from "@etherspot/transaction-kit";
 
 import Head from "next/head";
 import Image from "next/image";
@@ -10,7 +15,6 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const Home = () => {
   const { user, error, isLoading } = useUser();
-  console.log(user);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [prediction, setPrediction] = useState(null);
@@ -27,6 +31,26 @@ const Home = () => {
 
   const [loginLoading, setLoginLoading] = useState(false);
   const [walletAddress, setWalletAddress] = useState();
+
+  const [gnosisSmartWalletAddress, setGnosisSmartWalletAddress] =
+    useState(false);
+  const etherspotAddresses = useEtherspotAddresses();
+
+  useEffect(() => {
+    const fetchGnosisSmartWallet = () => {
+      if (etherspotAddresses.length && !gnosisSmartWalletAddress) {
+        const gnosisNetwork = etherspotAddresses.find(
+          (network) => network.chainName === "xdai"
+        );
+        setGnosisSmartWalletAddress(gnosisNetwork.address);
+      }
+    };
+
+    fetchGnosisSmartWallet();
+  }, [etherspotAddresses, gnosisSmartWalletAddress]);
+
+  const etherspotBalanceOnGnosis = useEtherspotBalances(100);
+  console.log(etherspotBalanceOnGnosis);
 
   const handlePromptChange = (e) => {
     let promptValue = e.target.value;
@@ -103,7 +127,6 @@ const Home = () => {
       };
 
       const res = await axios(config);
-      console.log(res.data);
       return res.data.IpfsHash;
     } catch (err) {
       console.log(err);
@@ -111,11 +134,8 @@ const Home = () => {
   };
 
   const mintNFT = async () => {
-    console.log("mintNFT");
     setMinting(true);
     let ipfsHash = await generateIpfsHash();
-    console.log(ipfsHash);
-
     let iface = new ethers.utils.Interface(CONTRACT_ABI);
     let tokenURI = `https://ipfs.io/ipfs/${ipfsHash}`;
     let recipient = walletAddress;
@@ -136,7 +156,7 @@ const Home = () => {
           >
             <div className="flex lg:flex-1">
               <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
+                <span className="sr-only">Imaige</span>
                 <Image
                   src="/imaige.svg"
                   alt="Imaige Logo"
@@ -178,11 +198,13 @@ const Home = () => {
             <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
               <div className="flex items-center justify-between">
                 <a href="#" className="-m-1.5 p-1.5">
-                  <span className="sr-only">Your Company</span>
-                  <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                    alt=""
+                  <span className="sr-only">Imaige</span>
+                  <Image
+                    src="/imaige.svg"
+                    alt="Imaige Logo"
+                    width={36}
+                    height={36}
+                    priority
                   />
                 </a>
                 <button
@@ -197,17 +219,17 @@ const Home = () => {
               <div className="mt-6 flow-root">
                 <div className="-my-6 divide-y divide-gray-500/10">
                   <div className="py-6">
-                    {user && (
+                    {!user && (
                       <a
-                        href="#"
+                        href="/api/auth/login"
                         className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                       >
                         Log in
                       </a>
                     )}
-                    {!user && (
+                    {user && (
                       <a
-                        href="#"
+                        href="/api/auth/logout"
                         className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                       >
                         Log out
@@ -257,11 +279,9 @@ const Home = () => {
             </div>
           )}
           {!isLoading && user && (
-            <div className="mt-32 mx-auto max-w-2xl py-8 sm:py-12 lg:py-14">
+            <div className="mt-2 mx-auto max-w-2xl py-8 sm:py-12 lg:py-14">
               <div className="text-center">
-                <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-4">
-                  Dream something and Mint it as an NFT
-                </h1>
+                <CardAvatar walletAddress={gnosisSmartWalletAddress} />
                 <div
                   htmlFor="prompt"
                   className="block text-sm font-medium leading-6 text-gray-900 hover:underline"
@@ -315,7 +335,6 @@ const Home = () => {
                     )}
                   </div>
                 )}
-                <Profile />
               </div>
             </div>
           )}
