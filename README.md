@@ -1,3 +1,16 @@
+## IMAIGE
+
+This is still a work in progress to use Transaction Kit from [Etherspot](https://etherspot.io) to interact with an NFT contract to generate an image via AI and mint it as an NFT (using Pinata cloud to keep the NFT asset decentralised).
+
+Some iterations has been tried to keep the smart wallet address persistent (local storage but not safe) and Auth0 with Hasura.
+
+TODO: Keep persistent the smart wallet address from Transaction Kit and from there ->
+
+TODO: Smart Wallet address balance via `useEtherspotBalances()`
+TODO: Interact with the NFT smart contract via `<EtherspotContractTransaction/>`
+TODO: Transaction history via `useEtherspotHistory()`
+TODO: List NFT by smart wallet address via `useEtherspotNfts()`
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
