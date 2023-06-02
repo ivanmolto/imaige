@@ -4,6 +4,8 @@ This is still a work in progress to use Transaction Kit from [Etherspot](https:/
 
 Some iterations has been tried to keep the smart wallet address persistent (local storage but not safe) and Auth0 with Hasura.
 
+The smart contract has been deployed to the Gnosis mainnet and the address is: 0xAdBBd2Dbf5B4FCdaeE7bFCC2f24Bc88c08fB078F
+
 TODO: Keep persistent the smart wallet address from Transaction Kit and from there ->
 
 TODO: Smart Wallet address balance via `useEtherspotBalances()`
