@@ -7,6 +7,7 @@ import {
   useEtherspotBalances,
 } from "@etherspot/transaction-kit";
 
+import Loading from "../components/loading";
 import Head from "next/head";
 import Image from "next/image";
 
@@ -15,6 +16,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const Home = () => {
   const { user, error, isLoading } = useUser();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [prediction, setPrediction] = useState(null);
@@ -255,7 +257,7 @@ const Home = () => {
               }}
             />
           </div>
-          {!user && (
+          {!user && !isLoading && (
             <div className="mt-32 mx-auto max-w-2xl py-8 sm:py-12 lg:py-14">
               <div className="text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-4">
@@ -276,6 +278,11 @@ const Home = () => {
                   </a>
                 </div>
               </div>
+            </div>
+          )}
+          {isLoading && (
+            <div className="mt-32 mx-auto max-w-2xl py-8 sm:py-12 lg:py-14">
+              <Loading />
             </div>
           )}
           {!isLoading && user && (
